@@ -46,22 +46,32 @@ export default {
       keysearch:"",
       sortDirection:"",
       modalVisible:false,
+      totalRows:[],
 
     }
   },
   computed:{
     listCountries(){
       //search
-      const search=this.countries.filter((c)=>{
+      var sortable;
+      if(this.sortDirection=='asc'){
+        // Name A to Z
+        sortable =this.countries.sort((a, b) => (a.name.official > b.name.official ? 1 : -1))
+      }else{
+        // Name Z to A
+        sortable=this.countries.sort((a, b) => (a.name.official > b.name.official ? -1 : 1))
+      }
+      const search=sortable.filter((c)=>{
         if(c.name.official.toLowerCase().match(this.keysearch.toLowerCase())){
           return c;
         }
       })
+      this.totalRows=search;
       //pagination
       return search.slice((this.currentPage-1)*this.perPage,this.currentPage*this.perPage) ;
     },
     totalRow(){
-      return this.countries.length;
+      return this.totalRows.length;
     }
   },
   mounted(){
@@ -86,17 +96,7 @@ export default {
      
     },
     sortBy(sortDirection){
-      // alert("test");
-    
-      if(sortDirection=='asc'){
-        // Name A to Z
-        this.sortDirection ='asc';
-        this.listCountries=this.countries.sort((a, b) => (a.name.official > b.name.official ? 1 : -1))
-      }else{
-          // Name Z to A
-          this.sortDirection ='desc';
-          this.listCountries=this.countries.sort((a, b) => (a.name.official > b.name.official ? -1 : 1))
-      }
+        this.sortDirection =sortDirection;
     },
 
     
